@@ -1,0 +1,4 @@
+* dotspacemacs-config
+
+This my personal config for *Spacemacs*.
+Feel free to use it.
