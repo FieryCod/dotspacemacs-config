@@ -390,7 +390,17 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (eldoc-mode +1)
   (tide-hl-identifier-mode +1)
   (company-mode +1)
+  (use-eslint-from-node-modules)
   (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
+
+(defun use-eslint-from-node-modules ()
+  "Use local eslint"
+  (let* ((root
+          (locate-dominating-file (or (buffer-file-name) default-directory) "node_modules"))
+         (eslint
+          (and root (expand-file-name "node_modules/eslint/bin/eslint.js" root))))
+    (when (and eslint (file-executable-p eslint))
+      (setq-local flycheck-javascript-eslint-executable eslint))))
 
 (defun read-current-buffer ()
   "Reads the current buffer"
@@ -503,6 +513,7 @@ before packages are loaded."
   (use-package spaceline-all-the-icons
     :after spaceline
     :config
+    (spaceline-all-the-icons-toggle-slim)
     (setq spaceline-all-the-icons-highlight-file-name t)
     (setq spaceline-all-the-icons-separator-type 'none)
     (spaceline-all-the-icons--setup-anzu)             ;; Enable anzu searching
@@ -543,9 +554,9 @@ before packages are loaded."
   ;; Speedup web-mode validation
   (setq web-mode-enable-block-partial-invalidation t)
 
-  ;; Disable wrong highlights of smartparens (Do not delete in any case)
-  (with-eval-after-load 'smartparens
-    (show-smartparens-global-mode -1))
+  ;; Disables highlight of matching parens
+  ;; (with-eval-after-load 'smartparens
+  ;;   (show-smartparens-global-mode -1))
 
   ;; Config for python mode
   (add-hook 'python-mode-hook (lambda ()
@@ -581,7 +592,8 @@ before packages are loaded."
   (add-hook 'js2-mode-hook 'setup-tide-mode)
 
   ;; Special mode for clojure development
-  (add-hook 'cider-mode-hook (lambda () (rainbow-delimiters-mode 1 )) 'append)
+  (add-hook 'cider-mode-hook (lambda () (rainbow-delimiters-mode 1) (flycheck-mode 1)) 'append)
+
   (setq clojure-enable-fancify-symbols t)
 
   ;; Adds some basic indirect keybindings
@@ -605,9 +617,11 @@ before packages are loaded."
   (semantic-mode 1) ;; One of the best package you MUST CHECK IT OUT
   (global-company-mode)
 
+  ;; Add mutli cursors to prog-mode
+  (add-hook 'prog-mode-hook 'multiple-cursors-mode)
+
   ;; Fix for the web-mode do not delete
-  (add-hook 'web-mode-hook (lambda () (company-mode -1)) 'append)
-  (add-hook 'web-mode-hook (lambda () (smartparens-mode 1)) 'append)
+  (add-hook 'web-mode-hook (lambda () (company-mode -1) (smartparens-mode 1) (multiple-cursors-mode 1)) 'append)
 
   ;; Configure flycheck and flyspell
   (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-previous-word-generic)
