@@ -30,39 +30,18 @@
    dotspacemacs-configuration-layer-path '()
 
    ;; List of configuration layers to load.
-   dotspacemacs-configuration-layers '((auto-completion :variables
-                                                        auto-completion-enable-snippets-in-popup t
+   dotspacemacs-configuration-layers '(
+                                       (auto-completion :variables
+                                                        auto-completion-enable-snippets-in-popup nil
                                                         auto-completion-return-key-behavior nil
                                                         auto-completion-enable-help-tooltip t
                                                         auto-completion-enable-sort-by-usage t
-                                                        auto-completion-tab-key-behavior 'complete
-                                                        spacemacs-default-company-backends '(company-files
-                                                                                             company-anaconda
-                                                                                             company-keywords
-                                                                                             company-dabbrev-code
-                                                                                             company-dabbrev
-                                                                                             company-yasnippet
-                                                                                             company-css
-                                                                                             company-web-html))
-                                       docker
-                                       javascript
-                                       evil-commentary
-                                       csv
-                                       better-defaults
-                                       clojure
-                                       go
-                                       html
-                                       github
-                                       emacs-lisp
-                                       syntax-checking
-                                       neotree
-                                       yaml
-                                       parinfer
-                                       sql
-                                       python ;; Note that you can use YAPF to auto-format the code
-                                       colors
-                                       markdown
-                                       ivy
+                                                        auto-completion-complete-with-key-sequence-delay 0.3
+                                                        auto-completion-tab-key-behavior 'complete)
+
+                                       ;; Python layer config
+                                       (python :variables
+                                               python-backend 'anaconda)
 
                                        ;; C-c++ layer config
                                        (c-c++ :variables
@@ -74,56 +53,59 @@
                                             git-magit-status-fullscreen t)
 
                                        ;; Version-control layer config
-                                       (version-control :variables
-                                                        version-control-diff-tool 'diff-hl
-                                                        version-control-global-margin t)
+                                       version-control
 
                                        ;; Org layer config
                                        (org :variables
                                             org-enable-github-support t)
 
-                                       ;; Semantic layer config
-                                       (semantic :disabled-for
-                                                 emacs-lisp) ;; disables hangs on emacs-lisp
-
                                        ;; Shell layer config
                                        (shell :variables
-                                              shell-default-height 40
+                                              shell-default-height 35
                                               shell-default-position 'bottom
-                                              shell-default-term-shell "/bin/bash"))
+                                              shell-default-shell 'ansi-term
+                                              shell-default-term-shell "/bin/zsh")
+
+                                       ;; Syntax checking
+                                       (syntax-checking :variables
+                                                        syntax-checking-enable-by-default t
+                                                        syntax-checking-enable-tooltips t)
+
+                                       nginx
+
+                                       (treemacs :variables
+                                                 treemacs-use-follow-mode t
+                                                 treemacs-collapse-dirs 0
+                                                 treemacs-use-git-mode 'simple
+                                                 treemacs-use-filewatch-mode t)
+
+                                       yaml colors osx spotify haskell
+                                       docker php javascript evil-commentary
+                                       csv better-defaults clojure
+                                       go html github emacs-lisp
+                                       parinfer plantuml ruby sql
+                                       emoji typescript gtags ivy)
+
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(highlight-indent-guides
-                                      tide
-                                      flycheck-clojure
-                                      rich-minority
-                                      writeroom-mode
-                                      doom-themes
-                                      vue-mode
-                                      focus
-                                      4clojure
-                                      rainbow-delimiters
-                                      editorconfig
-                                      edit-indirect
-                                      git
-                                      edit-server
-                                      spaceline-all-the-icons
-                                      all-the-icons-dired
-                                      all-the-icons-gnus
-                                      all-the-icons-ivy
-                                      anaconda-mode
-                                      company-anaconda
-                                      indium
-                                      sphinx-doc)
+                                      company-shell super-save rjsx-mode pylint
+                                      ivy tide elisp-format flycheck-clojure
+                                      rich-minority exec-path-from-shell
+                                      writeroom-mode doom-themes vue-mode
+                                      focus 4clojure rainbow-delimiters
+                                      editorconfig edit-indirect git
+                                      all-the-icons-dired all-the-icons-gnus
+                                      all-the-icons-ivy anaconda-mode
+                                      company-anaconda indium sphinx-doc)
 
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(tern
-                                    company-tern)
+   dotspacemacs-excluded-packages '(tern company-tern)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -174,7 +156,7 @@
    dotspacemacs-check-for-update nil
 
    ;; If non-nil, a form that evaluates to a package directory. For example, to
-   ;; use different package directories for different Emacs versions, set this
+   ;; use different package directories for different Emacs version
    ;; to `emacs-version'. (default 'emacs-version)
    dotspacemacs-elpa-subdirectory 'emacs-version
 
@@ -219,8 +201,8 @@
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '((doom-dracula :location local)
-                         dracula
+   dotspacemacs-themes '(doom-tomorrow-night
+                         doom-dracula
                          doom-one
                          spacemacs-dark
                          spacemacs-light)
@@ -232,7 +214,10 @@
    ;; to create your own spaceline theme. Value can be a symbol or list with\
    ;; additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(all-the-icons :separator nil :separator-scale 0.2)
+   dotspacemacs-mode-line-theme '(spacemacs :separator nil
+                                            :separator-scale 1.5)
+   ;; dotspacemacs-mode-line-theme '(all-the-icons :separator nil
+   ;;                                              :separator-scale 0.2)
 
    ;; If non-nil the cursor color matches the state color in GUI Emacs.
    ;; (default t)
@@ -240,11 +225,11 @@
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Fantasque Sans Mono"
-                               :size 20
+   dotspacemacs-default-font '("Monaco"
+                               :size 16
                                :weight normal
                                :width normal
-                               :powerline-scale 1.0)
+                               :powerline-scale 0.2)
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -252,6 +237,7 @@
    ;; The key used for Emacs commands `M-x' (after pressing on the leader key).
    ;; (default "SPC")
    dotspacemacs-emacs-command-key "SPC"
+
    ;; The key used for Vim Ex commands (default ":")
    dotspacemacs-ex-command-key ":"
 
@@ -312,7 +298,7 @@
    ;; auto-save the file in-place, `cache' to auto-save the file to another
    ;; file stored in the cache directory and `nil' to disable auto-saving.
    ;; (default 'cache)
-   dotspacemacs-auto-save-file-location 'cache
+   dotspacemacs-auto-save-file-location 'nil
 
    ;; Maximum number of rollback slots to keep in the cache. (default 5)
    dotspacemacs-max-rollback-slots 5
@@ -322,7 +308,7 @@
 
    ;; if non-nil, the helm header is hidden when there is only one source.
    ;; (default nil)
-   dotspacemacs-helm-no-header nil
+   dotspacemacs-helm-no-header t
 
    ;; define the position to display `helm', options are `bottom', `top',
    ;; `left', or `right'. (default 'bottom)
@@ -394,7 +380,7 @@
    ;; If non-nil smooth scrolling (native-scrolling) is enabled. Smooth
    ;; scrolling overrides the default behavior of Emacs which recenters point
    ;; when it reaches the top or bottom of the screen. (default t)
-   dotspacemacs-smooth-scrolling t
+   dotspacemacs-smooth-scrolling nil
    ;; Control line numbers activation.
    ;; If set to `t' or `relative' line numbers are turned on in all `prog-mode' and
    ;; `text-mode' derivatives. If set to `relative', line numbers are relative.
@@ -421,7 +407,6 @@
    ;; If non-nil pressing the closing parenthesis `)' key in insert mode passes
    ;; over any automatically added closing parenthesis, bracket, quote, etc…
    ;; This can be temporary disabled by pressing `C-q' before `)'. (default nil)
-
    dotspacemacs-smart-closing-parenthesis t
 
    ;; Select a scope to highlight delimiters. Possible values are `any',
@@ -493,6 +478,14 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
    js2-basic-offset 2
    js-indent-level 2
 
+   ;; typescript-mode
+   typescript-indent-level 2
+
+   ;; Turn off js2 mode errors & warnings (we lean on eslint/standard)
+   js2-mode-show-parse-errors nil
+   js2-mode-show-strict-warnings nil
+
+
    ;; web-mode
    css-indent-offset 2
    web-mode-markup-indent-offset 2
@@ -501,15 +494,14 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
    web-mode-attr-indent-offset 2
    electric-indent-inhibit t))
 
-(defun my/setup-tide-mode ()
-  "Setup tide mode for javascript files"
-  (interactive)
-  (tide-setup)
-  (smartparens-mode +1)
-  (flycheck-mode +1)
-  (tide-hl-identifier-mode +1)
-  (company-mode +1)
-  (flycheck-add-next-checker 'javascript-eslint 'javascript-tide 'append))
+(defun my/pretty-symbols ()
+  "Prettify the symbols in the buffer"
+  (setq prettify-symbols-alist '(("lambda" .  ?λ)
+                                 ("function" . ?ƒ)
+                                 ("this". ?ť)
+                                 ("<=" . ?≤)
+                                 (">=" . ?≥)))
+  (prettify-symbols-mode 1))
 
 (defun my/edit-indirect-scss (begin end)
   "Enables to quickly edit scss mode in the indirect buffer"
@@ -519,7 +511,9 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
 (defun my/read-current-buffer ()
   "Reads the current buffer"
-  (buffer-substring-no-properties 1 (buffer-size)))
+  (buffer-substring-no-properties
+   1
+   (buffer-size)))
 
 (defun my/get-area-start-pos (regex string)
   "Get start pos of template, script, style area in .vue file"
@@ -536,7 +530,8 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (let* ((start-pos (my/get-area-start-pos "\\(<template.*\\)" (my/read-current-buffer)))
          (curr-overlay (mmm-overlay-at start-pos)))
     (goto-char start-pos)
-    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay) (overlay-end curr-overlay)))
+    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay)
+                                            (overlay-end curr-overlay)))
     (vue-html-mode)
     (goto-char 0)))
 
@@ -546,13 +541,15 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (let* ((start-pos (my/get-area-start-pos "\\(<script.*\\)" (my/read-current-buffer)))
          (curr-overlay (mmm-overlay-at start-pos)))
     (goto-char start-pos)
-    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay) (overlay-end curr-overlay)))
+    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay)
+                                            (overlay-end curr-overlay)))
     (js2-mode)
     (goto-char 0)))
 
 (defun my/edit-large-file ()
   "If a file is over a given size, make the buffer read only."
-  (when (> (buffer-size) (* 1024 100)) ;; ~ 100kb
+  (when (> (buffer-size)
+           (* 1024 100)) ;; ~ 100kb
     (buffer-disable-undo)
     (fundamental-mode)))
 
@@ -562,18 +559,18 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (let* ((start-pos (my/get-area-start-pos "\\(<style.*\\)" (my/read-current-buffer)))
          (curr-overlay (mmm-overlay-at start-pos)))
     (goto-char start-pos)
-    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay) (overlay-end curr-overlay)))
+    (switch-to-buffer (edit-indirect-region (overlay-start curr-overlay)
+                                            (overlay-end curr-overlay)))
     (scss-mode)
     (goto-char 0)))
 
 (defun my/zen-mode ()
-  "Customizes the writeroom-mode"
+  "Customizes the writeroom-mode."
   (interactive)
   (if (bound-and-true-p writeroom-mode)
-      (progn
-        (writeroom-mode -1)
-        (save-buffer)
-        (revert-buffer t t))
+      (progn (writeroom-mode -1)
+             (save-buffer)
+             (revert-buffer t t))
     (progn (highlight-indentation-mode 1)
            (highlight-indent-guides-mode 1)
            (highlight-indent-guides-mode -1)
@@ -581,30 +578,99 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
            (linum-mode -1)
            (writeroom-mode 1))))
 
+(defun markdown-html (buffer)
+  (princ (with-current-buffer buffer
+           (format "<!DOCTYPE html><html><script src=\"https://cdnjs.cloudflare.com/ajax/libs/he/1.1.1/he.js\"></script><link rel=\"stylesheet\" href=\"https://assets-cdn.github.com/assets/github-e6bb18b320358b77abe040d2eb46b547.css\"><link rel=\"stylesheet\" href=\"https://assets-cdn.github.com/assets/frameworks-95aff0b550d3fe338b645a4deebdcb1b.css\"><title>Impatient Markdown</title><div id=\"markdown-content\" style=\"display:none\">%s</div><div class=\"markdown-body\" style=\"max-width:968px;margin:0 auto;\"></div><script>fetch('https://api.github.com/markdown', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer babc1c31defb55136098e247e732ab12351901a9' }, body: JSON.stringify({ \"text\": document.getElementById('markdown-content').innerHTML, \"mode\": \"gfm\", \"context\": \"knit-pk/homepage-nuxtjs\"}) }).then(response => response.text()).then(response => {document.querySelector('.markdown-body').innerHTML = he.decode(response)}).then(() => { fetch(\"https://gist.githubusercontent.com/FieryCod/b6938b29531b6ec72de25c76fa978b2c/raw/\").then(response => response.text()).then(eval)});</script></html>"
+                   (buffer-substring-no-properties (point-min) (point-max))))
+         (current-buffer)))
+
+(defun markdown-preview-like-god ()
+  (interactive)
+  (impatient-mode 1)
+  (setq imp-user-filter #'markdown-html)
+  (cl-incf imp-last-state)
+  (imp--notify-clients))
+
 (defun dotspacemacs/user-config ()
-  "Configuration for user code: This function is called at the very end of Spacemacs startup, after layer configuration.
-   Put your configuration code here, except for variables that should be set before packages are loaded."
+  "Configuration for user code:
+This function is called at the very end of Spacemacs startup,
+after layer configuration. Put your configuration code here,
+except for variables that should be set before packages are loaded."
+
+  (setq highlight-indent-guides-delay 15)
+  (setq highlight-indent-guides-responsive nil)
+  (spaceline-toggle-minor-modes-off)
+  (spaceline-toggle-battery-off)
+
+  (setq-default company-backends '((company-css company-keywords company-shell company-files)))
+
+  ;; Enable auto saving feature :)
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t)
+
+  ;; Enable flycheck on save
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+
+  ;; Disable global highlight-line
+  (global-hl-line-mode -1)
+
+  (global-set-key (kbd "C-c C-c G") 'markdown-preview-like-god)
+
+  ;; Config for python mode
+  (add-hook 'python-mode-hook (lambda ()
+                                (require 'sphinx-doc)
+                                (sphinx-doc-mode t)
+                                (anaconda-eldoc-mode 1)
+                                (setq flycheck-checker 'python-pylint
+                                      flycheck-checker-error-threshold 900
+                                      flycheck-pylintrc ".pylintrc")))
+
+  ;; Put the text property unless ignore
+  (defun put-text-property-unless-ignore (start end property value &optional object)
+    "`put-text-property', but ignore text with property `font-lock-ignore'."
+    (let ((here (min start end))
+          (end1 (max start end)) chg)
+      (while (< here end1)
+        (setq chg (next-single-property-change here 'font-lock-ignore object end1))
+        (unless (get-text-property here 'font-lock-ignore object)
+          (put-text-property here chg property value object))
+        (setq here chg))))
+
+  ;; Dired in macos
+  (setq dired-use-ls-dired nil)
+
+  ;; Speed up the projectile
+  (setq projectile-mode-line '(:eval (format " Projectile[%s]" (projectile-project-name))))
+
+  ;; Enable projectile caching
+  (setq projectile-enable-caching t)
+
+  ;; Set yasnippet company keybinding
+  (global-set-key (kbd "C-M-y") 'company-yasnippet)
+
+  ;; Set margin after the line number
+  ;; (setq linum-format "%4d\u2502")
+
+  ;; Support for dotenv files
+  (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . fundamental-mode))
+
+  ;; Remove the alt as a extra modifier
+  (setq ns-right-alternate-modifier nil)
+
+  ;; Setup for plantuml-mode for UML files
+  (add-to-list 'auto-mode-alist '("\\.wsd\\'" . plantuml-mode))
+  (add-hook 'plantuml-mode-hook (lambda () (plantuml-set-output-type "png")))
 
   ;; Add bacground-color for right side of line numbers
   (set-face-attribute 'fringe nil :background nil)
-  ;; (setq linum-format "%4d\u2502")
 
   ;; customize indent-guide
-  (require 'highlight-indent-guides)
-  (use-package highlight-indent-guides
-    :init
-    (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-    (add-hook 'mmm-mode-hook (lambda () (highlight-indent-guides-mode 1)))
-    :config
-    (setq highlight-indent-guides-method 'character))
+  (setq highlight-indent-guides-method 'character)
+  (add-hook 'yaml-mode-hook (lambda () (highlight-indent-guides-mode 1)))
 
   ;; Support for c-c++
   (setq clang-format-executable "/usr/bin/clang-format-6.0")
-  (add-hook 'semantic-init-hooks (lambda ()
-                                   (semantic-add-system-include "/usr/include/" 'c++-mode)))
-
-  ;; Disable ivy virtual buffers
-  (setq ivy-use-virtual-buffers nil)
+  (add-hook 'semantic-init-hooks (lambda () (semantic-add-system-include "/usr/include/" 'c++-mode)))
 
   ;; Setup the zen-mode and binds it to correct key
   ;; Should not be used with buffers which use mmm-mode like .vue
@@ -613,103 +679,59 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq writeroom-width 90)
 
   ;; Fix C-k for auto-complete company backends
-  (add-hook
-   'company-completion-started-hook
-   (lambda (&rest ignore)
-     (when evil-mode
-       (when (evil-insert-state-p)
-         (define-key evil-insert-state-map (kbd "C-k") nil)))))
+  (add-hook 'company-completion-started-hook
+            (lambda (&rest ignore)
+              (when evil-mode (when (evil-insert-state-p)
+                                (define-key evil-insert-state-map (kbd "C-k") nil)))))
 
   ;; If you do not use doom-themes then comment those lines
   (setq doom-themes-enable-bold t
+        doom-dracula-brighter-comments t
+        doom-dracula-padded-modeline t
         doom-themes-enable-italic t)
 
   ;; Enable flashing mode-line on errors
   (doom-themes-visual-bell-config)
 
   ;; Enable custom neotree theme
-  (doom-themes-neotree-config)  ; all-the-icons fonts must be installed!
+  ;; all-the-icons fonts must be installed!
+  (doom-themes-treemacs-config)
 
   ;; Corrects (and improves) org-mode's native fontification.
   (doom-themes-org-config)
-
-  ;; Workaround for the issues with native completion in python
-  (with-eval-after-load 'python
-    (defun python-shell-completion-native-try ()
-      "Return non-nil if can trigger native completion."
-      (let ((python-shell-completion-native-enable t)
-            (python-shell-completion-native-output-timeout
-             python-shell-completion-native-try-output-timeout))
-        (python-shell-completion-native-get-completions
-         (get-buffer-process (current-buffer))
-         nil "_"))))
-
-  ;; Python3 default shell-default-term
-  ;; (remember to install jupyter, ipython via pip)
-  (setq py-shell-name "python3")
-
-  ;; Disable/Enable some globals
-  (golden-ratio-mode -1)
-  (whitespace-mode 1)
-  (editorconfig-mode 1)
-  (semantic-mode 1)
-  (global-company-mode)
-
-  ;; Enable global eldoc mode (useful for showing arguments of the function in echo area)
-  (global-eldoc-mode 1)
 
   ;; Disable spacemacs comments themes
   (setq spacemacs-theme-comment-bg nil)
 
   ;; Add hook which enables to collapse elements
-  (add-hook 'prog-mode-hook 'hs-minor-mode)
+  (add-hook 'prog-mode-hook
+            (lambda ()
+              (setq sp-pair-list (add-to-list 'sp-pair-list '("\\`" . "\\`")))
+              (eldoc-mode 1)
+              (company-mode 1)
+              (editorconfig-mode 1)
+              (smartparens-mode 1)
+              (highlight-indent-guides-mode 1)
+              ;; (global-color-identifiers-mode 1)
+              (multiple-cursors-mode 1)
+              (my/pretty-symbols)
+              ;; (which-function-mode 1)
+              (hs-minor-mode 1)
+              (ggtags-mode 1)))
 
-  ;; Enable spaceline-all-the-icons and customize it
-  (use-package spaceline-all-the-icons
-    :after spaceline
-    :config
-    (setq spaceline-all-the-icons-highlight-file-name t)
-    (setq spaceline-all-the-icons-separator-type 'none)
-    (spaceline-all-the-icons--setup-anzu)             ;; Enable anzu searching
-    (spaceline-all-the-icons--setup-neotree))         ;; Enable Neotree mode line
-
-  ;; Start Emacs server (works with google-chrome extension)
-  (edit-server-start)
-
-  ;; Disables auto-compile which hangs the Emacs while editing .spacemacs file
+  ;; Configure emacs-lisp
   (remove-hook 'emacs-lisp-mode-hook 'auto-compile-mode)
-  (add-hook 'emacs-lisp-mode-hook (lambda () (rainbow-delimiters-mode 1 )) 'append)
-
-  ;; Adds some great coloring for the modes
-  (add-hook 'after-init-hook 'global-color-identifiers-mode)
-
-  ;; Aligns annotation to the right hand side
-  (setq company-tooltip-align-annotations t)
+  (add-hook 'emacs-lisp-mode-hook (lambda () (parinfer-mode 1)))
+  (add-hook 'parinfer-mode-hook (lambda () (rainbow-delimiters-mode 1)))
 
   ;; Enable auto complete everywhere
   (setq company-dabbrev-code-everywhere t)
 
-  ;; Run linter on save
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-
-  ;; Enable great paradox menu
-  (setq paradox-github-token "") ;; Look for paradox package
-
   ;; Customize neo-tree theme
   (setq neo-theme (if (display-graphic-p) 'icons 'cup))
 
-  ;; Disable the startup message and compacting font caches
-  (setq inhibit-startup-message t)
-  (setq inhibit-compacting-font-caches t)
-
-  ;; Setup projectile caching
-  (setq projectile-enable-caching nil)
-
   ;; Setup google translate
   (setq google-translate-default-target-language "pl")
-
-  ;; Setup all the icons for ivy
-  (all-the-icons-ivy-setup)
 
   ;; Customize dired mode with all-the-icons-dired-mode
   (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
@@ -721,26 +743,15 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (setq web-mode-enable-block-partial-invalidation t)
 
   ;; Disables highlight of matching parens
-  (with-eval-after-load 'smartparens (show-smartparens-global-mode -1))
-
-  ;; Config for python mode
-  (add-hook 'python-mode-hook (lambda ()
-                                (require 'sphinx-doc)
-                                (sphinx-doc-mode t)
-                                (flycheck-mode 1)
-                                (anaconda-eldoc-mode 1)
-                                (setq flycheck-checker 'python-pylint
-                                      flycheck-checker-error-threshold 900
-                                      flycheck-pylintrc ".pylintrc")
-                                (setq python-indent-offset 2)))
+  ;; (with-eval-after-load 'smartparens (show-smartparens-global-mode -1))
 
   ;; Config for vue.js, nuxt.js
   (add-hook 'vue-mode-hook (lambda ()
-                             (company-mode -1) ;; Comment this line if your computer is fast
+                             (highlight-indent-guides-mode 1)
                              (smartparens-mode 1)
-                             (semantic-mode -1)
                              (hs-minor-mode 1)
                              (emmet-mode -1)))
+
   (add-hook 'vue-html-mode-hook (lambda () (highlight-indent-guides-mode 1)))
 
   ;; Disable decoration in vue.js files
@@ -748,20 +759,31 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; Add config for scss files
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
-  (add-hook 'scss-mode-hook (lambda () (rainbow-mode 1)) 'append)
+  (add-hook 'scss-mode-hook
+            (lambda () (rainbow-mode 1)
+              'append))
 
-  ;; Turn off js2 mode errors & warnings (we lean on eslint/standard)
-  (setq js2-mode-show-parse-errors nil)
-  (setq js2-mode-show-strict-warnings nil)
-
-  ;; Add support for intellisense as in vscode
-  (setq tide-format-options '(:indentSize 2 :tabSize 2 :insertSpaceAfterFunctionKeywordForAnonymousFunctions t :placeOpenBraceOnNewLineForFunctions nil))
-  (add-hook 'js2-mode-hook 'my/setup-tide-mode)
+  ;; Setup tide for .ts .js files
+  (setq tide-always-show-documentation t)
+  (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
+  (add-to-list 'auto-mode-alist '("resources\\/.*\\.js\\'" . rjsx-mode))
+  (add-to-list 'auto-mode-alist '("scenes\\/.*\\.js\\'" . rjsx-mode))
+  (add-hook 'rjsx-mode-hook (lambda () (tide-setup)))
+  (add-hook 'js2-mode-hook (lambda () (tide-setup)))
 
   ;; Special mode for clojure development
-  (add-hook 'cider-mode-hook (lambda () (rainbow-delimiters-mode 1) (flycheck-mode 1)) 'append)
-  (add-hook 'clojurescript-mode-hook (lambda () (rainbow-delimiters-mode 1) (flycheck-mode 1)) 'append)
+  (add-hook 'cider-mode-hook
+            (lambda ()
+              (rainbow-delimiters-mode 1)
+              'append))
+  (add-hook 'clojurescript-mode-hook
+            (lambda ()
+              (rainbow-delimiters-mode 1)
+              'append))
+
   (setq clojure-enable-fancify-symbols t)
+
+  (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
 
   ;; Adds some basic indirect keybindings
   (global-set-key (kbd "C-c C-c r") 'edit-indirect-region)
@@ -771,6 +793,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; Add auto-complete to C-<tab>
   (global-set-key (kbd "C-<tab>") 'company-complete)
+  (global-set-key (kbd "C-M-<tab>") 'company-dabbrev-code)
 
   ;; Show todos in project
   (spacemacs/set-leader-keys (kbd "s C-t") 'show-todos-without-front-whitespaces)
@@ -782,17 +805,33 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
   ;; Disable some wrong defaults and add some global modes
   (setq evil-move-cursor-back nil)
-  (setq fci-rule-column 120)
   (fset 'evil-visual-update-x-selection 'ignore)
 
   ;; Support editing large files
   (add-hook 'find-file-hook 'my/edit-large-file)
 
-  ;; Add mutli cursors to prog-mode
-  (add-hook 'prog-mode-hook 'multiple-cursors-mode)
-
   ;; Fix for the web-mode do not delete
-  (add-hook 'web-mode-hook (lambda () (smartparens-mode 1) (multiple-cursors-mode 1)) 'append)
-
   (add-hook 'hack-local-variables-hook (lambda () (setq truncate-lines t)))
   (add-hook 'spacemacs-buffer-mode-hook (lambda () (set (make-local-variable 'mouse-1-click-follows-link) nil))))
+
+(defun dotspacemacs/emacs-custom-settings ()
+  "Emacs custom settings.
+  This is an auto-generated function, do not modify its content directly, use
+  Emacs customize menu instead.
+  This function is called at the very end of Spacemacs initialization."
+  (custom-set-variables
+  ;; custom-set-variables was added by Custom.
+  ;; If you edit it by hand, you could mess it up, so be careful.
+  ;; Your init file should contain only one such instance.
+  ;; If there is more than one, they won't work right.
+  )
+  (custom-set-faces
+   ;; custom-set-faces was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   '(doom-modeline-error ((t (:background "gray12" :foreground "gray99"))))
+   '(font-lock-function-name-face ((t (:foreground "#81a2be" :slant italic))))
+   '(font-lock-type-face ((t (:foreground "#f0c674" :weight ultra-bold :width extra-expanded))))
+  )
+)
