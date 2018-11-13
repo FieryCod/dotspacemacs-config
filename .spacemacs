@@ -43,11 +43,6 @@
                                        (python :variables
                                                python-backend 'anaconda)
 
-                                       ;; C-c++ layer config
-                                       (c-c++ :variables
-                                              c-c++-default-mode-for-headers 'c++-mode
-                                              c-c++-enable-clang-support t)
-
                                        ;; Git layer config
                                        (git :variables
                                             git-magit-status-fullscreen t)
@@ -74,10 +69,8 @@
                                        nginx
 
                                        (treemacs :variables
-                                                 treemacs-use-follow-mode t
                                                  treemacs-collapse-dirs 0
-                                                 treemacs-use-git-mode 'simple
-                                                 treemacs-use-filewatch-mode t)
+                                                 treemacs-use-git-mode 'simple)
 
                                        yaml colors osx spotify haskell
                                        docker php javascript evil-commentary
@@ -92,7 +85,7 @@
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(highlight-indent-guides
-                                      company-shell super-save rjsx-mode pylint
+                                      company-shell rjsx-mode pylint
                                       ivy tide elisp-format flycheck-clojure
                                       rich-minority exec-path-from-shell
                                       writeroom-mode doom-themes vue-mode
@@ -201,7 +194,8 @@
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(doom-tomorrow-night
+   dotspacemacs-themes '(
+                         doom-tomorrow-night
                          doom-dracula
                          doom-one
                          spacemacs-dark
@@ -568,15 +562,19 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   "Customizes the writeroom-mode."
   (interactive)
   (if (bound-and-true-p writeroom-mode)
-      (progn (writeroom-mode -1)
-             (save-buffer)
-             (revert-buffer t t))
-    (progn (highlight-indentation-mode 1)
-           (highlight-indent-guides-mode 1)
-           (highlight-indent-guides-mode -1)
-           (highlight-indentation-mode -1)
-           (linum-mode -1)
-           (writeroom-mode 1))))
+      (progn
+        (display-line-numbers-mode 1)
+        (writeroom-mode -1)
+        (save-buffer)
+        (revert-buffer t t))
+    (progn
+      (highlight-indent-guides-mode -1)
+      (highlight-indentation-mode 1)
+      (highlight-indent-guides-mode 1)
+      (highlight-indentation-mode -1)
+      (highlight-indent-guides-mode -1)
+      (display-line-numbers-mode -1)
+      (writeroom-mode 1))))
 
 (defun markdown-html (buffer)
   (princ (with-current-buffer buffer
@@ -591,11 +589,21 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (cl-incf imp-last-state)
   (imp--notify-clients))
 
+(defun my/ediff-copy-both-to-C ()
+  (interactive)
+  (ediff-copy-diff ediff-current-difference nil 'C nil
+                   (concat
+                    (ediff-get-region-contents ediff-current-difference 'A ediff-control-buffer)
+                    (ediff-get-region-contents ediff-current-difference 'B ediff-control-buffer))))
+
 (defun dotspacemacs/user-config ()
   "Configuration for user code:
 This function is called at the very end of Spacemacs startup,
 after layer configuration. Put your configuration code here,
 except for variables that should be set before packages are loaded."
+
+  ;; Add ediff both A & B to C buffer using B command
+  (add-hook 'ediff-keymap-setup-hook (lambda () (define-key ediff-mode-map "B" 'my/ediff-copy-both-to-C)))
 
   (setq highlight-indent-guides-delay 15)
   (setq highlight-indent-guides-responsive nil)
@@ -603,10 +611,6 @@ except for variables that should be set before packages are loaded."
   (spaceline-toggle-battery-off)
 
   (setq-default company-backends '((company-css company-keywords company-shell company-files)))
-
-  ;; Enable auto saving feature :)
-  (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t)
 
   ;; Enable flycheck on save
   (setq flycheck-check-syntax-automatically '(save mode-enabled))
@@ -820,11 +824,11 @@ except for variables that should be set before packages are loaded."
   Emacs customize menu instead.
   This function is called at the very end of Spacemacs initialization."
   (custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
-  )
+   ;; custom-set-variables was added by Custom.
+   ;; If you edit it by hand, you could mess it up, so be careful.
+   ;; Your init file should contain only one such instance.
+   ;; If there is more than one, they won't work right.
+   )
   (custom-set-faces
    ;; custom-set-faces was added by Custom.
    ;; If you edit it by hand, you could mess it up, so be careful.
@@ -833,5 +837,5 @@ except for variables that should be set before packages are loaded."
    '(doom-modeline-error ((t (:background "gray12" :foreground "gray99"))))
    '(font-lock-function-name-face ((t (:foreground "#81a2be" :slant italic))))
    '(font-lock-type-face ((t (:foreground "#f0c674" :weight ultra-bold :width extra-expanded))))
+   )
   )
-)
