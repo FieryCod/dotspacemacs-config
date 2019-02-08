@@ -24,6 +24,7 @@
    ;; a layer lazily. (default t)
    dotspacemacs-ask-for-lazy-installation t
 
+
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
@@ -34,10 +35,18 @@
                                        (auto-completion :variables
                                                         auto-completion-enable-snippets-in-popup nil
                                                         auto-completion-return-key-behavior nil
-                                                        auto-completion-enable-help-tooltip t
+                                                        auto-completion-enable-help-tooltip nil
                                                         auto-completion-enable-sort-by-usage t
                                                         auto-completion-complete-with-key-sequence-delay 0.3
                                                         auto-completion-tab-key-behavior 'complete)
+
+                                       (rust :variables
+                                             rust-backend 'lsp
+                                             rust-format-on-save t)
+
+                                       lsp
+
+                                       multiple-cursors
 
                                        ;; Python layer config
                                        (python :variables
@@ -58,33 +67,44 @@
                                        (shell :variables
                                               shell-default-height 35
                                               shell-default-position 'bottom
-                                              shell-default-shell 'ansi-term
+                                              shell-default-shell 'multi-term
                                               shell-default-term-shell "/bin/zsh")
 
                                        ;; Syntax checking
                                        (syntax-checking :variables
-                                                        syntax-checking-enable-by-default t
+                                                        syntax-checking-enable-by-default nil
                                                         syntax-checking-enable-tooltips t)
 
-                                       nginx
-
                                        (treemacs :variables
+                                                 treemacs-silent-refresh t
                                                  treemacs-collapse-dirs 0
                                                  treemacs-use-git-mode 'simple)
 
-                                       yaml colors osx spotify haskell
-                                       docker php javascript evil-commentary
-                                       csv better-defaults clojure
-                                       go html github emacs-lisp
-                                       parinfer plantuml ruby sql
-                                       emoji typescript gtags ivy)
+                                       (typescript :variables
+                                                   typescript-backend 'tide)
 
+                                       (ruby :variables
+                                             ruby-version-manager 'rvm
+                                             ruby-enable-enh-ruby-mode t)
+
+                                       (clojure :variables
+                                                clojure-enable-sayid t
+                                                clojure-enable-clj-refactor t)
+
+                                       nginx ruby-on-rails yaml
+                                       colors osx spotify haskell
+                                       docker javascript evil-commentary
+                                       csv better-defaults
+                                       go html github emacs-lisp
+                                       parinfer plantuml sql
+                                       emoji ivy)
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages, then consider creating a layer. You can also put the
    ;; configuration in `dotspacemacs/user-config'.
    dotspacemacs-additional-packages '(highlight-indent-guides
+                                      terraform-mode company-terraform
                                       company-shell rjsx-mode pylint
                                       ivy tide elisp-format flycheck-clojure
                                       rich-minority exec-path-from-shell
@@ -98,7 +118,7 @@
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
    ;; A list of packages that will not be installed and loaded.
-   dotspacemacs-excluded-packages '(tern company-tern)
+   dotspacemacs-excluded-packages '(tern company-tern clojure-cheatsheet)
 
    ;; Defines the behaviour of Spacemacs when installing packages.
    ;; Possible values are `used-only', `used-but-keep-unused' and `all'.
@@ -195,8 +215,8 @@
    ;; Press `SPC T n' to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
    dotspacemacs-themes '(
-                         doom-tomorrow-night
                          doom-dracula
+                         doom-tomorrow-night
                          doom-one
                          spacemacs-dark
                          spacemacs-light)
@@ -208,8 +228,7 @@
    ;; to create your own spaceline theme. Value can be a symbol or list with\
    ;; additional properties.
    ;; (default '(spacemacs :separator wave :separator-scale 1.5))
-   dotspacemacs-mode-line-theme '(spacemacs :separator nil
-                                            :separator-scale 1.5)
+   dotspacemacs-mode-line-theme '(doom :separator nil :separator-scale 1.5)
    ;; dotspacemacs-mode-line-theme '(all-the-icons :separator nil
    ;;                                              :separator-scale 0.2)
 
@@ -219,11 +238,11 @@
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Monaco"
+   dotspacemacs-default-font '("Fira Code"
                                :size 16
                                :weight normal
                                :width normal
-                               :powerline-scale 0.2)
+                               :powerline-scale 0.1)
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -388,7 +407,7 @@
    ;;                       text-mode
    ;;   :size-limit-kb 1000)
    ;; (default nil)
-   dotspacemacs-line-numbers t
+   dotspacemacs-line-numbers nil
 
    ;; Code folding method. Possible values are `evil' and `origami'.
    ;; (default 'evil)
@@ -488,15 +507,6 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
    web-mode-attr-indent-offset 2
    electric-indent-inhibit t))
 
-(defun my/pretty-symbols ()
-  "Prettify the symbols in the buffer"
-  (setq prettify-symbols-alist '(("lambda" .  ?λ)
-                                 ("function" . ?ƒ)
-                                 ("this". ?ť)
-                                 ("<=" . ?≤)
-                                 (">=" . ?≥)))
-  (prettify-symbols-mode 1))
-
 (defun my/edit-indirect-scss (begin end)
   "Enables to quickly edit scss mode in the indirect buffer"
   (interactive "r")
@@ -563,7 +573,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
   (interactive)
   (if (bound-and-true-p writeroom-mode)
       (progn
-        (display-line-numbers-mode 1)
+        ;; (display-line-numbers-mode 1)
         (writeroom-mode -1)
         (save-buffer)
         (revert-buffer t t))
@@ -573,7 +583,7 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
       (highlight-indent-guides-mode 1)
       (highlight-indentation-mode -1)
       (highlight-indent-guides-mode -1)
-      (display-line-numbers-mode -1)
+      ;; (display-line-numbers-mode -1)
       (writeroom-mode 1))))
 
 (defun markdown-html (buffer)
@@ -607,13 +617,12 @@ except for variables that should be set before packages are loaded."
 
   (setq highlight-indent-guides-delay 15)
   (setq highlight-indent-guides-responsive nil)
-  (spaceline-toggle-minor-modes-off)
-  (spaceline-toggle-battery-off)
 
-  (setq-default company-backends '((company-css company-keywords company-shell company-files)))
+  (setq company-show-numbers t)
+  (setq-default company-backends '((company-css company-keywords company-files)))
 
   ;; Enable flycheck on save
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  ;; (setq flycheck-check-syntax-automatically '(save mode-enabled))
 
   ;; Disable global highlight-line
   (global-hl-line-mode -1)
@@ -652,9 +661,6 @@ except for variables that should be set before packages are loaded."
   ;; Set yasnippet company keybinding
   (global-set-key (kbd "C-M-y") 'company-yasnippet)
 
-  ;; Set margin after the line number
-  ;; (setq linum-format "%4d\u2502")
-
   ;; Support for dotenv files
   (add-to-list 'auto-mode-alist '("\\.env\\..*\\'" . fundamental-mode))
 
@@ -664,9 +670,6 @@ except for variables that should be set before packages are loaded."
   ;; Setup for plantuml-mode for UML files
   (add-to-list 'auto-mode-alist '("\\.wsd\\'" . plantuml-mode))
   (add-hook 'plantuml-mode-hook (lambda () (plantuml-set-output-type "png")))
-
-  ;; Add bacground-color for right side of line numbers
-  (set-face-attribute 'fringe nil :background nil)
 
   ;; customize indent-guide
   (setq highlight-indent-guides-method 'character)
@@ -688,24 +691,9 @@ except for variables that should be set before packages are loaded."
               (when evil-mode (when (evil-insert-state-p)
                                 (define-key evil-insert-state-map (kbd "C-k") nil)))))
 
-  ;; If you do not use doom-themes then comment those lines
-  (setq doom-themes-enable-bold t
-        doom-dracula-brighter-comments t
-        doom-dracula-padded-modeline t
-        doom-themes-enable-italic t)
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-
-  ;; Enable custom neotree theme
-  ;; all-the-icons fonts must be installed!
-  (doom-themes-treemacs-config)
-
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config)
-
   ;; Disable spacemacs comments themes
   (setq spacemacs-theme-comment-bg nil)
+  (setq dired-listing-switches "-alh")
 
   ;; Add hook which enables to collapse elements
   (add-hook 'prog-mode-hook
@@ -716,12 +704,7 @@ except for variables that should be set before packages are loaded."
               (editorconfig-mode 1)
               (smartparens-mode 1)
               (highlight-indent-guides-mode 1)
-              ;; (global-color-identifiers-mode 1)
-              (multiple-cursors-mode 1)
-              (my/pretty-symbols)
-              ;; (which-function-mode 1)
-              (hs-minor-mode 1)
-              (ggtags-mode 1)))
+              (hs-minor-mode 1)))
 
   ;; Configure emacs-lisp
   (remove-hook 'emacs-lisp-mode-hook 'auto-compile-mode)
@@ -730,9 +713,6 @@ except for variables that should be set before packages are loaded."
 
   ;; Enable auto complete everywhere
   (setq company-dabbrev-code-everywhere t)
-
-  ;; Customize neo-tree theme
-  (setq neo-theme (if (display-graphic-p) 'icons 'cup))
 
   ;; Setup google translate
   (setq google-translate-default-target-language "pl")
@@ -775,11 +755,9 @@ except for variables that should be set before packages are loaded."
   (add-hook 'rjsx-mode-hook (lambda () (tide-setup)))
   (add-hook 'js2-mode-hook (lambda () (tide-setup)))
 
-  ;; Special mode for clojure development
-  (add-hook 'cider-mode-hook
-            (lambda ()
-              (rainbow-delimiters-mode 1)
-              'append))
+  (add-hook 'clojure-mode-hook
+            (lambda () (parinfer-mode 1)))
+
   (add-hook 'clojurescript-mode-hook
             (lambda ()
               (rainbow-delimiters-mode 1)
@@ -807,6 +785,8 @@ except for variables that should be set before packages are loaded."
   (spacemacs/set-leader-keys (kbd "p X") 'projectile-remove-known-project)
   (spacemacs/set-leader-keys (kbd "b C-r") 'revert-buffer)
 
+  (evil-set-initial-state 'multi-term 'normal)
+
   ;; Disable some wrong defaults and add some global modes
   (setq evil-move-cursor-back nil)
   (fset 'evil-visual-update-x-selection 'ignore)
@@ -820,22 +800,48 @@ except for variables that should be set before packages are loaded."
 
 (defun dotspacemacs/emacs-custom-settings ()
   "Emacs custom settings.
-  This is an auto-generated function, do not modify its content directly, use
-  Emacs customize menu instead.
-  This function is called at the very end of Spacemacs initialization."
-  (custom-set-variables
-   ;; custom-set-variables was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   )
-  (custom-set-faces
-   ;; custom-set-faces was added by Custom.
-   ;; If you edit it by hand, you could mess it up, so be careful.
-   ;; Your init file should contain only one such instance.
-   ;; If there is more than one, they won't work right.
-   '(doom-modeline-error ((t (:background "gray12" :foreground "gray99"))))
-   '(font-lock-function-name-face ((t (:foreground "#81a2be" :slant italic))))
-   '(font-lock-type-face ((t (:foreground "#f0c674" :weight ultra-bold :width extra-expanded))))
-   )
-  )
+This is an auto-generated function, do not modify its content directly, use
+Emacs customize menu instead.
+This function is called at the very end of Spacemacs initialization."
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   (quote
+    (groovy-mode hasklig-mode tide yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify vue-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill typescript-mode treemacs-projectile treemacs-evil toml-mode toc-org tagedit symon string-inflection sql-indent spotify sphinx-doc spaceline-all-the-icons smex smeargle slim-mode shell-pop seeing-is-believing scss-mode sayid sass-mode rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rjsx-mode rich-minority reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pylint pyenv-mode py-isort pug-mode projectile-rails prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode password-generator parinfer paradox ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nginx-mode nameless mwim multi-term move-text minitest magithub magit-svn magit-gitflow magit-gh-pulls macrostep lsp-ui lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indium indent-guide importmagic impatient-mode hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation highlight-indent-guides helm-make haskell-snippets google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitignore-mode github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ git gist fuzzy forge font-lock+ focus flycheck-rust flycheck-pos-tip flycheck-haskell flycheck-clojure flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-commentary evil-cleverparens evil-args evil-anzu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav elisp-format editorconfig dumb-jump dotenv-mode doom-themes doom-modeline dockerfile-mode docker diminish diff-hl cython-mode csv-mode counsel-spotify counsel-projectile counsel-css company-web company-terraform company-statistics company-shell company-lsp company-go company-ghci company-emoji company-cabal company-anaconda column-enforce-mode color-identifiers-mode cmm-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby centered-cursor-mode cargo bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile all-the-icons-ivy all-the-icons-gnus all-the-icons-dired aggressive-indent ace-link ac-ispell 4clojure)))
+ '(safe-local-variable-values
+   (quote
+    ((elisp-lint-indent-specs
+      (if-let* . 2)
+      (when-let* . 1)
+      (let* . defun)
+      (nrepl-dbind-response . 2)
+      (cider-save-marker . 1)
+      (cider-propertize-region . 1)
+      (cider-map-repls . 1)
+      (cider--jack-in . 1)
+      (cider--make-result-overlay . 1)
+      (multiline-comment-handler . defun)
+      (insert-label . defun)
+      (insert-align-label . defun)
+      (insert-rect . defun)
+      (cl-defun . 2)
+      (with-parsed-tramp-file-name . 2)
+      (thread-first . 1)
+      (thread-last . 1))
+     (checkdoc-package-keywords-flag)
+     (typescript-backend . tide)
+     (typescript-backend . lsp)
+     (javascript-backend . tern)
+     (javascript-backend . lsp)
+     (go-backend . go-mode)
+     (go-backend . lsp)))))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
+)
