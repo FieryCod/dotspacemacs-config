@@ -92,7 +92,7 @@
                                                 clojure-enable-clj-refactor t)
 
                                        nginx ruby-on-rails yaml
-                                       colors osx spotify haskell
+                                       colors spotify haskell
                                        docker javascript evil-commentary
                                        csv better-defaults
                                        go html github emacs-lisp
@@ -238,11 +238,7 @@
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("Fira Code"
-                               :size 16
-                               :weight normal
-                               :width normal
-                               :powerline-scale 0.1)
+   dotspacemacs-default-font '("Essential PragmataPro 16")
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -638,17 +634,6 @@ except for variables that should be set before packages are loaded."
                                       flycheck-checker-error-threshold 900
                                       flycheck-pylintrc ".pylintrc")))
 
-  ;; Put the text property unless ignore
-  (defun put-text-property-unless-ignore (start end property value &optional object)
-    "`put-text-property', but ignore text with property `font-lock-ignore'."
-    (let ((here (min start end))
-          (end1 (max start end)) chg)
-      (while (< here end1)
-        (setq chg (next-single-property-change here 'font-lock-ignore object end1))
-        (unless (get-text-property here 'font-lock-ignore object)
-          (put-text-property here chg property value object))
-        (setq here chg))))
-
   ;; Dired in macos
   (setq dired-use-ls-dired nil)
 
@@ -763,8 +748,6 @@ except for variables that should be set before packages are loaded."
               (rainbow-delimiters-mode 1)
               'append))
 
-  (setq clojure-enable-fancify-symbols t)
-
   (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
 
   ;; Adds some basic indirect keybindings
@@ -810,34 +793,7 @@ This function is called at the very end of Spacemacs initialization."
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
    (quote
-    (groovy-mode hasklig-mode tide yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify vue-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill typescript-mode treemacs-projectile treemacs-evil toml-mode toc-org tagedit symon string-inflection sql-indent spotify sphinx-doc spaceline-all-the-icons smex smeargle slim-mode shell-pop seeing-is-believing scss-mode sayid sass-mode rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rjsx-mode rich-minority reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pylint pyenv-mode py-isort pug-mode projectile-rails prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode password-generator parinfer paradox ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nginx-mode nameless mwim multi-term move-text minitest magithub magit-svn magit-gitflow magit-gh-pulls macrostep lsp-ui lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indium indent-guide importmagic impatient-mode hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation highlight-indent-guides helm-make haskell-snippets google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitignore-mode github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ git gist fuzzy forge font-lock+ focus flycheck-rust flycheck-pos-tip flycheck-haskell flycheck-clojure flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-commentary evil-cleverparens evil-args evil-anzu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav elisp-format editorconfig dumb-jump dotenv-mode doom-themes doom-modeline dockerfile-mode docker diminish diff-hl cython-mode csv-mode counsel-spotify counsel-projectile counsel-css company-web company-terraform company-statistics company-shell company-lsp company-go company-ghci company-emoji company-cabal company-anaconda column-enforce-mode color-identifiers-mode cmm-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby centered-cursor-mode cargo bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile all-the-icons-ivy all-the-icons-gnus all-the-icons-dired aggressive-indent ace-link ac-ispell 4clojure)))
- '(safe-local-variable-values
-   (quote
-    ((elisp-lint-indent-specs
-      (if-let* . 2)
-      (when-let* . 1)
-      (let* . defun)
-      (nrepl-dbind-response . 2)
-      (cider-save-marker . 1)
-      (cider-propertize-region . 1)
-      (cider-map-repls . 1)
-      (cider--jack-in . 1)
-      (cider--make-result-overlay . 1)
-      (multiline-comment-handler . defun)
-      (insert-label . defun)
-      (insert-align-label . defun)
-      (insert-rect . defun)
-      (cl-defun . 2)
-      (with-parsed-tramp-file-name . 2)
-      (thread-first . 1)
-      (thread-last . 1))
-     (checkdoc-package-keywords-flag)
-     (typescript-backend . tide)
-     (typescript-backend . lsp)
-     (javascript-backend . tern)
-     (javascript-backend . lsp)
-     (go-backend . go-mode)
-     (go-backend . lsp)))))
+    (neotree define-word yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify vue-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toml-mode toc-org tide tagedit symon string-inflection sql-indent spotify sphinx-doc spaceline-all-the-icons smex smeargle slim-mode shell-pop seeing-is-believing scss-mode sayid sass-mode rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rjsx-mode rich-minority reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pylint pyenv-mode py-isort pug-mode projectile-rails prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode password-generator parinfer paradox ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nginx-mode nameless mwim multi-term move-text minitest magithub magit-svn magit-gitflow macrostep lsp-ui lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indium indent-guide importmagic impatient-mode hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation highlight-indent-guides helm-make haskell-snippets google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitignore-mode github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ git gist fuzzy forge font-lock+ focus flycheck-rust flycheck-pos-tip flycheck-haskell flycheck-clojure flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-commentary evil-cleverparens evil-args evil-anzu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav elisp-format editorconfig dumb-jump dotenv-mode doom-themes doom-modeline dockerfile-mode docker diminish diff-hl cython-mode csv-mode counsel-spotify counsel-projectile counsel-css company-web company-terraform company-statistics company-shell company-lsp company-go company-ghci company-emoji company-cabal company-anaconda column-enforce-mode color-identifiers-mode cmm-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby centered-cursor-mode cargo bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile all-the-icons-ivy all-the-icons-gnus all-the-icons-dired aggressive-indent ace-link ac-ispell 4clojure))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
