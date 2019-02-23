@@ -1,7 +1,6 @@
 ;; -*- mode: emacs-lisp -*-
 ;; This file is loaded by Spacemacs at startup.
 ;; It must be stored in your home directory.
-
 (defun dotspacemacs/layers ()
   "Layer configuration: This function should only modify configuration layer settings."
   (setq-default
@@ -19,11 +18,11 @@
    ;; installation feature and you have to explicitly list a layer in the
    ;; variable `dotspacemacs-configuration-layers' to install it.
    ;; (default 'unused)
-   dotspacemacs-enable-lazy-installation 'unused
+   dotspacemacs-enable-lazy-installation 'nil
+
    ;; If non-nil then Spacemacs will ask for confirmation before installing
    ;; a layer lazily. (default t)
    dotspacemacs-ask-for-lazy-installation t
-
 
    ;; If non-nil layers with lazy install support are lazy installed.
    ;; List f additional paths where to look for configuration layers.
@@ -35,10 +34,11 @@
                                        (auto-completion :variables
                                                         auto-completion-enable-snippets-in-popup nil
                                                         auto-completion-return-key-behavior nil
-                                                        auto-completion-enable-help-tooltip nil
+                                                        auto-completion-enable-help-tooltip t
                                                         auto-completion-enable-sort-by-usage t
                                                         auto-completion-complete-with-key-sequence-delay 0.3
                                                         auto-completion-tab-key-behavior 'complete)
+                                       asciidoc
 
                                        (rust :variables
                                              rust-backend 'lsp
@@ -88,16 +88,24 @@
                                              ruby-enable-enh-ruby-mode t)
 
                                        (clojure :variables
+                                                clojure-enable-fancify-symbols t
                                                 clojure-enable-sayid t
                                                 clojure-enable-clj-refactor t)
+
+                                       (ivy :variables
+                                            ivy-enable-advanced-buffer-information t)
+
+                                       (go :variables
+                                           go-use-gometalinter t
+                                           go-backend 'lsp)
 
                                        nginx ruby-on-rails yaml
                                        colors spotify haskell
                                        docker javascript evil-commentary
                                        csv better-defaults
-                                       go html github emacs-lisp
+                                       html github emacs-lisp
                                        parinfer plantuml sql
-                                       emoji ivy)
+                                       emoji)
 
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -106,7 +114,7 @@
    dotspacemacs-additional-packages '(highlight-indent-guides
                                       terraform-mode company-terraform
                                       company-shell rjsx-mode pylint
-                                      ivy tide elisp-format flycheck-clojure
+                                      elisp-format flycheck-clojure
                                       rich-minority exec-path-from-shell
                                       writeroom-mode doom-themes vue-mode
                                       focus 4clojure rainbow-delimiters
@@ -237,7 +245,7 @@
 
    ;; Default font, or prioritized list of fonts. `powerline-scale' allows to
    ;; quickly tweak the mode-line size to make separators look not too crappy.
-   dotspacemacs-default-font '("PragmataPro Liga 16")
+   dotspacemacs-default-font '("PragmataPro Liga 13")
 
    ;; The leader key (default "SPC")
    dotspacemacs-leader-key "SPC"
@@ -357,6 +365,7 @@
    ;; If non-nil the frame is fullscreen when Emacs starts up. (default nil)
    ;; (Emacs 24.4+ only)
    dotspacemacs-fullscreen-at-startup t
+
    ;; If non-nil `spacemacs/toggle-fullscreen' will not use native fullscreen.
    ;; Use to disable fullscreen animations in OSX. (default nil)
    dotspacemacs-fullscreen-use-non-native nil
@@ -477,20 +486,9 @@ configuration.
 It is mostly for variables that should be set before packages are loaded.
 If you are unsure, try setting them in `dotspacemacs/user-config' first."
 
-  ;; Enable ligatures in comments
-  (setq prettify-symbols-compose-predicate
-        (defun my-prettify-symbols-default-compose-p (start end _match)
-          "Same as `prettify-symbols-default-compose-p', except compose symbols in comments as well."
-          (let* ((syntaxes-beg (if (memq (char-syntax (char-after start)) '(?w ?_))
-                                   '(?w ?_) '(?. ?\\)))
-                 (syntaxes-end (if (memq (char-syntax (char-before end)) '(?w ?_))
-                                   '(?w ?_) '(?. ?\\))))
-            (not (or (memq (char-syntax (or (char-before start) ?\s)) syntaxes-beg)
-                     (memq (char-syntax (or (char-after end) ?\s)) syntaxes-end)
-                     (nth 3 (syntax-ppss)))))))
-
   ;; add some defaults
   (setq-default
+
    ;; disable wordwrap
    truncate-lines t
 
@@ -841,6 +839,18 @@ If you are unsure, try setting them in `dotspacemacs/user-config' first."
             ("_|_"       #XEA97))))
 
 
+
+;; Enable ligatures in comments
+(defun prettify-symbols-default-compose-p (start end _match)
+  "Same as `prettify-symbols-default-compose-p', except compose symbols in comments as well."
+  (let* ((syntaxes-beg (if (memq (char-syntax (char-after start)) '(?w ?_))
+                           '(?w ?_) '(?. ?\\)))
+         (syntaxes-end (if (memq (char-syntax (char-before end)) '(?w ?_))
+                           '(?w ?_) '(?. ?\\))))
+    (not (or (memq (char-syntax (or (char-before start) ?\s)) syntaxes-beg)
+             (memq (char-syntax (or (char-after end) ?\s)) syntaxes-end)
+             (nth 3 (syntax-ppss))))))
+
 (defun add-pragmatapro-prettify-symbols-alist ()
   (dolist (alias pragmatapro-prettify-symbols-alist)
     (push alias prettify-symbols-alist)))
@@ -861,7 +871,6 @@ except for variables that should be set before packages are loaded."
   (setq highlight-indent-guides-responsive nil)
 
   (setq company-show-numbers t)
-  (setq-default company-backends '((company-css company-keywords company-files)))
 
   ;; Enable flycheck on save
   ;; (setq flycheck-check-syntax-automatically '(save mode-enabled))
@@ -950,44 +959,20 @@ except for variables that should be set before packages are loaded."
   ;; Add hook for text-mode
   (add-hook 'text-mode-hook 'smartparens-mode)
 
-  ;; Speedup web-mode validation
-  (setq web-mode-enable-block-partial-invalidation t)
-
-  ;; Disables highlight of matching parens
-  ;; (with-eval-after-load 'smartparens (show-smartparens-global-mode -1))
-
-  ;; Config for vue.js, nuxt.js
-  (add-hook 'vue-mode-hook (lambda ()
-                             (highlight-indent-guides-mode 1)
-                             (smartparens-mode 1)
-                             (hs-minor-mode 1)
-                             (emmet-mode -1)))
-
-  (add-hook 'vue-html-mode-hook (lambda () (highlight-indent-guides-mode 1)))
-
-  ;; Disable decoration in vue.js files
-  (setq mmm-submode-decoration-level 0)
-
   ;; Add config for scss files
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
   (add-hook 'scss-mode-hook
             (lambda () (rainbow-mode 1)
               'append))
 
-  ;; Setup tide for .ts .js files
-  (setq tide-always-show-documentation t)
-  (add-to-list 'auto-mode-alist '("components\\/.*\\.js\\'" . rjsx-mode))
-  (add-to-list 'auto-mode-alist '("resources\\/.*\\.js\\'" . rjsx-mode))
-  (add-to-list 'auto-mode-alist '("scenes\\/.*\\.js\\'" . rjsx-mode))
-  (add-hook 'rjsx-mode-hook (lambda () (tide-setup)))
-  (add-hook 'js2-mode-hook (lambda () (tide-setup)))
-
   (add-hook 'clojure-mode-hook
-            (lambda () (parinfer-mode 1)))
+            (lambda ()
+              (parinfer-mode 1)
+              'append))
 
   (add-hook 'clojurescript-mode-hook
             (lambda ()
-              (rainbow-delimiters-mode 1)
+              (parinfer-mode 1)
               'append))
 
   (add-to-list 'auto-mode-alist '("\\.edn\\'" . clojure-mode))
@@ -1000,7 +985,6 @@ except for variables that should be set before packages are loaded."
 
   ;; Add auto-complete to C-<tab>
   (global-set-key (kbd "C-<tab>") 'company-complete)
-  (global-set-key (kbd "C-M-<tab>") 'company-dabbrev-code)
 
   ;; Show todos in project
   (spacemacs/set-leader-keys (kbd "s C-t") 'show-todos-without-front-whitespaces)
@@ -1010,8 +994,6 @@ except for variables that should be set before packages are loaded."
   (spacemacs/set-leader-keys (kbd "p X") 'projectile-remove-known-project)
   (spacemacs/set-leader-keys (kbd "b C-r") 'revert-buffer)
 
-  (evil-set-initial-state 'multi-term 'normal)
-
   ;; Disable some wrong defaults and add some global modes
   (setq evil-move-cursor-back nil)
   (fset 'evil-visual-update-x-selection 'ignore)
@@ -1019,8 +1001,6 @@ except for variables that should be set before packages are loaded."
   ;; Support editing large files
   (add-hook 'find-file-hook 'my/edit-large-file)
 
-  ;; Fix for the web-mode do not delete
-  (add-hook 'hack-local-variables-hook (lambda () (setq truncate-lines t)))
   (add-hook 'spacemacs-buffer-mode-hook (lambda () (set (make-local-variable 'mouse-1-click-follows-link) nil))))
 
 (defun dotspacemacs/emacs-custom-settings ()
@@ -1036,10 +1016,12 @@ This function is called at the very end of Spacemacs initialization."
  '(dash-enable-fontlock t)
  '(doom-dracula-brighter-comments t)
  '(imenu-generic-skip-comments-and-strings nil)
+ '(org-agenda-files (quote ("~/org/retailic.org" "~/org/personal.org")))
  '(package-selected-packages
    (quote
-    (neotree define-word yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify vue-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toml-mode toc-org tide tagedit symon string-inflection sql-indent spotify sphinx-doc spaceline-all-the-icons smex smeargle slim-mode shell-pop seeing-is-believing scss-mode sayid sass-mode rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rjsx-mode rich-minority reveal-in-osx-finder restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pylint pyenv-mode py-isort pug-mode projectile-rails prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode password-generator parinfer paradox ox-gfm overseer osx-trash osx-dictionary orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nginx-mode nameless mwim multi-term move-text minitest magithub magit-svn magit-gitflow macrostep lsp-ui lorem-ipsum livid-mode live-py-mode link-hint launchctl json-navigator js-doc ivy-yasnippet ivy-xref ivy-purpose ivy-hydra indium indent-guide importmagic impatient-mode hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation highlight-indent-guides helm-make haskell-snippets google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitignore-mode github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ git gist fuzzy forge font-lock+ focus flycheck-rust flycheck-pos-tip flycheck-haskell flycheck-clojure flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-commentary evil-cleverparens evil-args evil-anzu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav elisp-format editorconfig dumb-jump dotenv-mode doom-themes doom-modeline dockerfile-mode docker diminish diff-hl cython-mode csv-mode counsel-spotify counsel-projectile counsel-css company-web company-terraform company-statistics company-shell company-lsp company-go company-ghci company-emoji company-cabal company-anaconda column-enforce-mode color-identifiers-mode cmm-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby centered-cursor-mode cargo bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile all-the-icons-ivy all-the-icons-gnus all-the-icons-dired aggressive-indent ace-link ac-ispell 4clojure)))
- '(prettify-symbols-unprettify-at-point (quote right-edge)))
+    (flycheck-gometalinter yasnippet-snippets yapfify yaml-mode xterm-color ws-butler writeroom-mode winum which-key wgrep web-mode web-beautify vue-mode volatile-highlights vi-tilde-fringe uuidgen use-package unfill treemacs-projectile treemacs-evil toml-mode toc-org tide tagedit symon string-inflection sql-indent spotify sphinx-doc spaceline-all-the-icons smex smeargle slim-mode shell-pop seeing-is-believing scss-mode sayid sass-mode rvm ruby-tools ruby-test-mode ruby-refactor ruby-hash-syntax rubocop rspec-mode robe rjsx-mode rich-minority restart-emacs rbenv rainbow-mode rainbow-identifiers rainbow-delimiters racer pyvenv pytest pylint pyenv-mode py-isort pug-mode projectile-rails prettier-js popwin plantuml-mode pippel pipenv pip-requirements persp-mode password-generator parinfer paradox ox-gfm overseer orgit org-projectile org-present org-pomodoro org-mime org-download org-bullets org-brain open-junk-file nginx-mode nameless mwim multi-term move-text minitest magithub magit-svn magit-gitflow macrostep lsp-ui lorem-ipsum livid-mode live-py-mode link-hint json-navigator js-doc ivy-yasnippet ivy-xref ivy-rich ivy-purpose ivy-hydra indium indent-guide importmagic impatient-mode hungry-delete hlint-refactor hl-todo hindent highlight-parentheses highlight-numbers highlight-indentation highlight-indent-guides helm-make haskell-snippets google-translate golden-ratio godoctor go-tag go-rename go-impl go-guru go-gen-test go-fill-struct go-eldoc gnuplot gitignore-templates gitignore-mode github-search github-clone gitconfig-mode gitattributes-mode git-timemachine git-messenger git-link git-gutter-fringe git-gutter-fringe+ git gist fuzzy forge font-lock+ focus flycheck-rust flycheck-pos-tip flycheck-haskell flycheck-clojure flx-ido fill-column-indicator feature-mode fancy-battery eyebrowse expand-region exec-path-from-shell evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-surround evil-org evil-numbers evil-mc evil-matchit evil-magit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-escape evil-ediff evil-commentary evil-cleverparens evil-args evil-anzu eshell-z eshell-prompt-extras esh-help enh-ruby-mode emojify emoji-cheat-sheet-plus emmet-mode elisp-slime-nav elisp-format editorconfig dumb-jump dotenv-mode doom-themes doom-modeline dockerfile-mode docker diminish diff-hl define-word cython-mode csv-mode counsel-spotify counsel-projectile counsel-css company-web company-terraform company-statistics company-shell company-quickhelp company-lsp company-go company-ghci company-emoji company-cabal company-anaconda column-enforce-mode color-identifiers-mode cmm-mode clojure-snippets clj-refactor clean-aindent-mode cider-eval-sexp-fu chruby centered-cursor-mode cargo bundler browse-at-remote auto-yasnippet auto-highlight-symbol auto-compile all-the-icons-ivy all-the-icons-gnus aggressive-indent adoc-mode ace-link ac-ispell 4clojure)))
+ '(prettify-symbols-unprettify-at-point (quote right-edge))
+ '(send-mail-function (quote mailclient-send-it)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
